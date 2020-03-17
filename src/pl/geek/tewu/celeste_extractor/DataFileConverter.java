@@ -9,7 +9,9 @@ public class DataFileConverter {
     static final boolean IS_LITTLE_ENDIAN = false;
 
 
-    public boolean convert(final String inputFilePath, final String outputFilePath) throws IOException {
+    public boolean convert(final String inputFilePath, final String outputFilePath) {
+        System.out.print("Converting " + inputFilePath + " to " + outputFilePath + " ... ");
+
         try (InputStream inStream = new BufferedInputStream(new FileInputStream(inputFilePath))) {
             byte[] imgDimensions = new byte[8];
             if (inStream.read(imgDimensions) == -1) throw new EOFException();
@@ -17,7 +19,7 @@ public class DataFileConverter {
             final int height = convertToInt32(imgDimensions, 4, IS_LITTLE_ENDIAN);
             final boolean isTransparent = inStream.read() != 0;
 
-            System.out.print("Converting " + inputFilePath + " to " + outputFilePath + " (" + width + "x" + height + ", " + (isTransparent ? 32 : 24) + " bits/pixel) ... ");
+            System.out.print("(" + width + "x" + height + ", " + (isTransparent ? 32 : 24) + " bits/pixel) ... ");
 
             BufferedImage img = new BufferedImage(width, height, isTransparent ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
             byte a, b, g, r;  // Input file pixel format: [Alpha, Blue, Green, Red] if isTransparent or [Blue, Green, Red] otherwise
@@ -57,7 +59,12 @@ public class DataFileConverter {
             boolean success = ImageIO.write(img, "png", new File(outputFilePath));
             System.out.println(success ? "[ SUCCESS ]" : "[ FAILURE ]");
             return success;
+
+        } catch (Exception exc) {
+            System.out.println("[ FAILURE ]");
+            exc.printStackTrace();
         }
+        return false;
     }
 
 
