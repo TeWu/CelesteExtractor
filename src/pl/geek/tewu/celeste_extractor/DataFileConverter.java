@@ -19,12 +19,11 @@ public class DataFileConverter {
 
             System.out.print("Converting " + inputFilePath + " to " + outputFilePath + " (" + width + "x" + height + ", " + (isTransparent ? 32 : 24) + " bits/pixel) ... ");
 
-            //OLD WAY: IntBuffer outBuffer = IntBuffer.allocate(width * height);
             BufferedImage img = new BufferedImage(width, height, isTransparent ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
             byte a, b, g, r;  // Input file pixel format: [Alpha, Blue, Green, Red] if isTransparent or [Blue, Green, Red] otherwise
             int x = 0, y = 0;
             int pixelData;
-            int runLength;  // The texture format uses a run-length encoding which allows the same bytes to represent data for multiple sequential pixels.
+            int runLength;  // The texture format uses a run-length encoding which allows the same bytes to represent data for multiple sequential pixels
             while ((runLength = inStream.read()) != -1) {
                 // Read pixel data from input file
                 if (isTransparent) {
@@ -52,11 +51,9 @@ public class DataFileConverter {
                         x = 0;
                         y++;
                     }
-                    //OLD WAY: outBuffer.put(pixelData);
                 }
             }
 
-//OLD WAY:            img.setData(Raster.createRaster(img.getSampleModel(), new DataBufferInt(outBuffer.array(), outBuffer.array().length), null));
             boolean success = ImageIO.write(img, "png", new File(outputFilePath));
             System.out.println(success ? "[ SUCCESS ]" : "[ FAILURE ]");
             return success;
