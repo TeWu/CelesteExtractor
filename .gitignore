@@ -1,0 +1,20 @@
+.idea/
+log/
+out/
+target/
+*.class
+*.iml
+
+.project
+.metadata
+tmp/**
+tmp/**/*
+local.properties
+.classpath
+.settings/
+.loadpath
+.target
+
+# Test data files:
+*.data
+*.png
