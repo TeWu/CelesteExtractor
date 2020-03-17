@@ -2,16 +2,20 @@ package pl.geek.tewu.celeste_extractor;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Path;
 
 
 public class DataFileConverter {
     static final boolean IS_LITTLE_ENDIAN = false;
 
-    public static boolean convert(final String inputFilePath, final String outputFilePath) {
+    public static boolean convert(final Path inputFilePath, final Path outputFilePath) {
         System.out.print("Converting " + inputFilePath + " to " + outputFilePath + " ... ");
 
-        try (InputStream inStream = new BufferedInputStream(new FileInputStream(inputFilePath))) {
+        try (InputStream inStream = new BufferedInputStream(new FileInputStream(inputFilePath.toFile()))) {
             byte[] imgDimensions = new byte[8];
             if (inStream.read(imgDimensions) == -1) throw new EOFException();
             final int width = convertToInt32(imgDimensions, 0, IS_LITTLE_ENDIAN);
@@ -55,7 +59,7 @@ public class DataFileConverter {
                 }
             }
 
-            boolean success = ImageIO.write(img, "png", new File(outputFilePath));
+            boolean success = ImageIO.write(img, "png", outputFilePath.toFile());
             System.out.println(success ? "[ SUCCESS ]" : "[ FAILURE ]");
             return success;
 
