@@ -8,8 +8,7 @@ import java.io.*;
 public class DataFileConverter {
     static final boolean IS_LITTLE_ENDIAN = false;
 
-
-    public boolean convert(final String inputFilePath, final String outputFilePath) {
+    public static boolean convert(final String inputFilePath, final String outputFilePath) {
         System.out.print("Converting " + inputFilePath + " to " + outputFilePath + " ... ");
 
         try (InputStream inStream = new BufferedInputStream(new FileInputStream(inputFilePath))) {
@@ -69,7 +68,7 @@ public class DataFileConverter {
 
 
     // SOURCE: https://referencesource.microsoft.com/mscorlib/system/bitconverter.cs.html#https://referencesource.microsoft.com/mscorlib/system/bitconverter.cs.html
-    private int convertToInt32(final byte[] value, int startIndex, boolean isLittleEndian) {
+    private static int convertToInt32(final byte[] value, int startIndex, boolean isLittleEndian) {
         if (value == null) throw new NullPointerException();
         if (startIndex >= value.length) throw new IndexOutOfBoundsException();
         if (startIndex > value.length - 4) throw new IndexOutOfBoundsException();
@@ -77,7 +76,7 @@ public class DataFileConverter {
         return byteArrayToInt(value, startIndex, isLittleEndian);
     }
 
-    private int byteArrayToInt(byte[] data, int startIndex, boolean isLittleEndian) {
+    private static int byteArrayToInt(byte[] data, int startIndex, boolean isLittleEndian) {
         if (isLittleEndian)
             return (data[startIndex] & 0xFF) << 24 |
                     (data[startIndex + 1] & 0xFF) << 16 |

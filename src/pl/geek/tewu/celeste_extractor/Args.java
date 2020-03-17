@@ -1,26 +1,20 @@
 package pl.geek.tewu.celeste_extractor;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class Args {
-    public File sourceFile;
-    public File targetFile;
+    public final Path sourcePath;
+    public final Path targetPath;
 
-    public Args() {
-        this(null, null);
-    }
-
-    public Args(File sourceFile, File targetFile) {
-        this.sourceFile = sourceFile;
-        this.targetFile = targetFile;
+    public Args(Path sourcePath, Path targetPath) {
+        this.sourcePath = sourcePath;
+        this.targetPath = targetPath;
     }
 
     @Override
     public String toString() {
-        return "Args{" +
-                "sourceFile='" + sourceFile + '\'' +
-                ", targetFile='" + targetFile + '\'' +
-                ", isDir=" + sourceFile.isDirectory() +
-                '}';
+        return "sourcePath='" + sourcePath + '\'' +
+                ", targetPath='" + targetPath + '\'' +
+                ", isSourcePathDir=" + sourcePath.toFile().isDirectory();
     }
 }
