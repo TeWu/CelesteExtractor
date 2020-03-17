@@ -1,5 +1,6 @@
 package pl.geek.tewu.celeste_extractor;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -9,7 +10,7 @@ import java.util.function.Consumer;
 
 
 public class FileProcessor {
-    public static final String DATA_FILES_GLOB_PATTERN = "**/*.txt"; // TODO: change .txt to .data
+    public static final String DATA_FILES_GLOB_PATTERN = "**/*.data"; // TODO: change .txt to .data
 
     private long processedFilesCount;
 
@@ -26,10 +27,26 @@ public class FileProcessor {
     }
 
     public boolean processFile(Path sourceFilePath, Path targetFilePath) {
-        System.out.println(">>>  " + sourceFilePath);
-        System.err.println(">>>  " + targetFilePath);
-//        DataFileConverter.convert(sourceFilePath, targetFilePath);
-        return true;
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        if (targetFilePath.toFile().exists()) {
+            // If output file already exists, skip conversion
+            System.out.println("NOTE: Output file '" + targetFilePath + "' already exists - skipping conversion of '" + sourceFilePath + "' file");
+            return true;
+        }
+        File targetFileParentPath = targetFilePath.getParent().toFile();
+        if (!targetFileParentPath.exists() && !targetFileParentPath.mkdirs()) {
+            // If can't create output file's parent dirs, report failure
+            System.out.println("ERROR: Can't create '" + targetFilePath + "' file parent directories");
+            return false;
+        }
+//        System.out.println(">>>  " + sourceFilePath);
+//        System.err.println(">>>  " + targetFilePath);
+//        return true;
+        return DataFileConverter.convert(sourceFilePath, targetFilePath);
     }
 
 
