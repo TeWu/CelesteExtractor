@@ -6,46 +6,48 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 
 public class FileProcessor {
-    public static final String DATA_FILES_GLOB_PATTERN = "**/*.data"; // TODO: change .txt to .data
+    public static final String DATA_FILES_GLOB_PATTERN = "**/*.data";
 
-    private long processedFilesCount;
-
+    private long filesCount = 1;
+    private AtomicLong processedFilesCount = new AtomicLong();
+    
 
     public boolean processDir(Path sourceDirPath, Path targetDirPath) throws IOException {
-        long filesCount = countFiles(sourceDirPath, DATA_FILES_GLOB_PATTERN);
-        processedFilesCount = 0;
-        walkDir(sourceDirPath, DATA_FILES_GLOB_PATTERN, sourceFilePath -> {
+        filesCount = countFiles(sourceDirPath, DATA_FILES_GLOB_PATTERN);
+        processedFilesCount.set(0);
+        walkDirParallel(sourceDirPath, DATA_FILES_GLOB_PATTERN, sourceFilePath -> {
             Path targetFilePath = rerootPath(sourceDirPath, targetDirPath, sourceFilePath, sourceFilePath.getFileName().toString() + ".png");
             if (processFile(sourceFilePath, targetFilePath))
-                processedFilesCount++;
+                processedFilesCount.incrementAndGet();
         });
-        return processedFilesCount == filesCount;
+        return processedFilesCount.get() == filesCount;
     }
 
     public boolean processFile(Path sourceFilePath, Path targetFilePath) {
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         if (targetFilePath.toFile().exists()) {
             // If output file already exists, skip conversion
-            System.out.println("NOTE: Output file '" + targetFilePath + "' already exists - skipping conversion of '" + sourceFilePath + "' file");
+            System.out.println("Skipping conversion of '" + sourceFilePath + "' file because output file '" + targetFilePath + "' already exists");
             return true;
         }
-        File targetFileParentPath = targetFilePath.getParent().toFile();
-        if (!targetFileParentPath.exists() && !targetFileParentPath.mkdirs()) {
-            // If can't create output file's parent dirs, report failure
-            System.out.println("ERROR: Can't create '" + targetFilePath + "' file parent directories");
-            return false;
+        File targetFileParent = targetFilePath.getParent().toFile();
+        if (!targetFileParent.exists())
+            synchronized (this) { // We don't want to create the same dirs from multiple threads concurrently
+                if (!targetFileParent.exists() && !targetFileParent.mkdirs()) {
+                    // If can't create output file's parent dirs, report failure
+                    System.out.println("ERROR: Can't create '" + targetFilePath + "' file parent directories");
+                    return false;
+                }
+            }
+        if (filesCount > 1) {
+            long fileNum = processedFilesCount.get() + 1;
+            System.out.print(fileNum + "/" + filesCount + " (" + fileNum * 100 / filesCount + "%) | ");
         }
-//        System.out.println(">>>  " + sourceFilePath);
-//        System.err.println(">>>  " + targetFilePath);
-//        return true;
         return DataFileConverter.convert(sourceFilePath, targetFilePath);
     }
 
@@ -53,16 +55,16 @@ public class FileProcessor {
     private long countFiles(Path dirPath, String globPattern) throws IOException {
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
         return Files.walk(dirPath)
-                .parallel()
                 .filter(pathMatcher::matches)
                 .count();
     }
 
-    private void walkDir(Path dirPath, String globPattern, Consumer<Path> action) throws IOException {
+    private void walkDirParallel(Path dirPath, String globPattern, Consumer<Path> action) throws IOException {
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + globPattern);
         Files.walk(dirPath)
-                .parallel()
                 .filter(pathMatcher::matches)
+                .collect(Collectors.toList())
+                .parallelStream()
                 .forEach(action);
     }
 

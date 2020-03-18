@@ -13,7 +13,7 @@ public class DataFileConverter {
     static final boolean IS_LITTLE_ENDIAN = false;
 
     public static boolean convert(final Path inputFilePath, final Path outputFilePath) {
-        System.out.print("Converting " + inputFilePath + " to " + outputFilePath + " ... ");
+        System.out.print("Converting '" + inputFilePath + "' to '" + outputFilePath + "' ... ");
 
         try (InputStream inStream = new BufferedInputStream(new FileInputStream(inputFilePath.toFile()))) {
             byte[] imgDimensions = new byte[8];
@@ -71,7 +71,7 @@ public class DataFileConverter {
     }
 
 
-    // SOURCE: https://referencesource.microsoft.com/mscorlib/system/bitconverter.cs.html#https://referencesource.microsoft.com/mscorlib/system/bitconverter.cs.html
+    // SOURCE: https://referencesource.microsoft.com/mscorlib/system/bitconverter.cs.html#1618fc20415532f2
     private static int convertToInt32(final byte[] value, int startIndex, boolean isLittleEndian) {
         if (value == null) throw new NullPointerException();
         if (startIndex >= value.length) throw new IndexOutOfBoundsException();

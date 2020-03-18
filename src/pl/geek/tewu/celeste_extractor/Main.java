@@ -6,9 +6,10 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+        long start = System.currentTimeMillis();
         Args parsedArgs = ArgsParser.parse(args);
 
-        System.out.println("Starting processing with arguments: " + parsedArgs);
+        System.out.println("Starting processing with arguments: " + parsedArgs + "\n");
 
         boolean fullSuccess;
         FileProcessor processor = new FileProcessor();
@@ -17,7 +18,8 @@ public class Main {
         else
             fullSuccess = processor.processFile(parsedArgs.sourcePath, parsedArgs.targetPath);
 
-        System.out.println("All done - " + (fullSuccess ? " All data files converted successfully :)" : "!! NOTE: Some data files couldn't be converted !!"));
+        long processingTime = System.currentTimeMillis() - start;
+        System.out.println("\nAll done in " + (processingTime / 1000) + " seconds - " + (fullSuccess ? " All data files converted successfully :)" : "!! NOTE: Some data files were not converted !! - You can try rerunning the program, also make sure you're passing correct paths to the program"));
     }
 
 }
