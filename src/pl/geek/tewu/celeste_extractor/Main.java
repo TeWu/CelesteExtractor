@@ -19,7 +19,7 @@ public class Main {
             fullSuccess = processor.processFile(parsedArgs.sourcePath, parsedArgs.targetPath);
 
         long processingTime = System.currentTimeMillis() - start;
-        System.out.println("\nAll done in " + (processingTime / 1000) + " seconds - " + (fullSuccess ? " All data files converted successfully :)" : "!! NOTE: Some data files were not converted !! - You can try rerunning the program, also make sure you're passing correct paths to the program"));
+        System.out.println("\nAll done in " + (processingTime / 1000) + " seconds - " + (fullSuccess ? " All .data files converted successfully :)" : "!! NOTE: Some .data files were not converted !! - You can try rerunning the program, also make sure you're passing correct paths to the program"));
     }
 
 }
