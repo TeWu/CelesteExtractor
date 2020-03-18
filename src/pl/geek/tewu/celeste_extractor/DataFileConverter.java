@@ -10,7 +10,6 @@ import java.nio.file.Path;
 
 
 public class DataFileConverter {
-    static final boolean IS_LITTLE_ENDIAN = false;
 
     public static boolean convert(final Path inputFilePath, final Path outputFilePath) {
         System.out.print("Converting '" + inputFilePath + "' to '" + outputFilePath + "' ... ");
@@ -18,15 +17,15 @@ public class DataFileConverter {
         try (InputStream inStream = new BufferedInputStream(new FileInputStream(inputFilePath.toFile()))) {
             byte[] imgDimensions = new byte[8];
             if (inStream.read(imgDimensions) == -1) throw new EOFException();
-            final int width = convertToInt32(imgDimensions, 0, IS_LITTLE_ENDIAN);
-            final int height = convertToInt32(imgDimensions, 4, IS_LITTLE_ENDIAN);
+            final int width = byteArrayToInt(imgDimensions, 0);
+            final int height = byteArrayToInt(imgDimensions, 4);
             final boolean isTransparent = inStream.read() != 0;
 
             System.out.print("(" + width + "x" + height + ", " + (isTransparent ? 32 : 24) + " bits/pixel) ... ");
 
             BufferedImage img = new BufferedImage(width, height, isTransparent ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
-            byte a, b, g, r;  // Input file pixel format: [Alpha, Blue, Green, Red] if isTransparent or [Blue, Green, Red] otherwise
-            int x = 0, y = 0;
+            byte a, b, g, r;   // Input file pixel format: [Alpha, Blue, Green, Red] if isTransparent or [Blue, Green, Red] otherwise
+            int x = 0, y = 0;  // Pixel coordinates
             int pixelData;
             int runLength;  // The texture format uses a run-length encoding which allows the same bytes to represent data for multiple sequential pixels
             while ((runLength = inStream.read()) != -1) {
@@ -71,25 +70,10 @@ public class DataFileConverter {
     }
 
 
-    // SOURCE: https://referencesource.microsoft.com/mscorlib/system/bitconverter.cs.html#1618fc20415532f2
-    private static int convertToInt32(final byte[] value, int startIndex, boolean isLittleEndian) {
-        if (value == null) throw new NullPointerException();
-        if (startIndex >= value.length) throw new IndexOutOfBoundsException();
-        if (startIndex > value.length - 4) throw new IndexOutOfBoundsException();
-        if (startIndex % 4 != 0) throw new RuntimeException("convertToInt32 Not Fully Implemented");
-        return byteArrayToInt(value, startIndex, isLittleEndian);
-    }
-
-    private static int byteArrayToInt(byte[] data, int startIndex, boolean isLittleEndian) {
-        if (isLittleEndian)
-            return (data[startIndex] & 0xFF) << 24 |
-                    (data[startIndex + 1] & 0xFF) << 16 |
-                    (data[startIndex + 2] & 0xFF) << 8 |
-                    (data[startIndex + 3] & 0xFF);
-        else
-            return (data[startIndex] & 0xFF) |
-                    (data[startIndex + 1] & 0xFF) << 8 |
-                    (data[startIndex + 2] & 0xFF) << 16 |
-                    (data[startIndex + 3] & 0xFF) << 24;
+    private static int byteArrayToInt(byte[] data, int startIndex) {
+        return (data[startIndex] & 0xFF) |
+                (data[startIndex + 1] & 0xFF) << 8 |
+                (data[startIndex + 2] & 0xFF) << 16 |
+                (data[startIndex + 3] & 0xFF) << 24;
     }
 }
