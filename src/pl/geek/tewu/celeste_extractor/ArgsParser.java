@@ -1,6 +1,9 @@
 package pl.geek.tewu.celeste_extractor;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Scanner;
 
 
 public class ArgsParser {
@@ -9,9 +12,15 @@ public class ArgsParser {
     public static Args parse(String[] args) {
         // Handle invalid arguments count and "--version" and "--help" cases
         if (args.length == 0) {
-            printUsage();
-            System.exit(1);
-        } else if (args[0].equals("--help")) {
+            Path pwdPath = Paths.get("").toAbsolutePath();
+            if (ask("Do you want to convert all .data files in '" + pwdPath + "' directory and its subdirectories to .png files? (yes/no): ")) {
+                args = new String[]{pwdPath.toString()};
+            } else {
+                printUsage();
+                System.exit(1);
+            }
+        }
+        if (args[0].equals("--help")) {
             printUsage();
             System.exit(0);
         } else if (args[0].equals("--version")) {
@@ -64,14 +73,23 @@ public class ArgsParser {
         return new Args(sourceFile.toPath().toAbsolutePath(), targetFile.toPath().toAbsolutePath());
     }
 
+    private static boolean ask(String message) {
+        Scanner in = new Scanner(System.in);
+        System.out.println(message);
+        return in.nextLine().trim().toLowerCase().equals("yes");
+    }
+
     private static void printUsage() {
         printBasicAppInfo();
         System.out.println(
                 "\nUsage:\n" +
-                        "    " + AppInfo.COMMAND + " [OPTION] INPUT_DIR [OUTPUT_DIR]\n" +
+                        "    " + AppInfo.COMMAND + " [OPTION] [INPUT_DIR] [OUTPUT_DIR]\n" +
                         "            Converts all .data files in INPUT_DIR and its subdirectories and puts resulting .png\n" +
-                        "            files in a matching directory structure rooted at OUTPUT_DIR. OUTPUT_DIR argument is\n" +
-                        "            optional, and when not specified defaults to '" + DEFAULT_OUTPUT_DIR_NAME + "'.\n" +
+                        "            files in a matching directory structure rooted at OUTPUT_DIR. Both INPUT_DIR and\n" +
+                        "            OUTPUT_DIR arguments are optional. If not specified, OUTPUT_DIR defaults to \n" +
+                        "            '" + DEFAULT_OUTPUT_DIR_NAME + "', and INPUT_DIR defaults to current working directory.\n" +
+                        "            If both INPUT_DIR and OUTPUT_DIR are not specified, program prompts for confirmation\n" +
+                        "            before starting the conversion.\n" +
                         "\n" +
                         "    " + AppInfo.COMMAND + " [OPTION] INPUT_FILE [OUTPUT_FILE]\n" +
                         "            Converts INPUT_FILE (.data file) to OUTPUT_FILE (.png file).\n" +

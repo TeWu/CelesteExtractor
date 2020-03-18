@@ -6,11 +6,11 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        long start = System.currentTimeMillis();
         Args parsedArgs = ArgsParser.parse(args);
 
         System.out.println("Starting processing with arguments: " + parsedArgs + "\n");
 
+        long start = System.currentTimeMillis();
         boolean fullSuccess;
         FileProcessor processor = new FileProcessor();
         if (parsedArgs.sourcePath.toFile().isDirectory())
