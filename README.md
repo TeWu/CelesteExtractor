@@ -40,7 +40,7 @@ Extract all the files from the `CelesteExtractor_vX.X.X.zip` into the `Atlases` 
 Step 2
 ---
 
-To convert all the game's `.data` files into `.png`s:
+To convert all the game's `.data` files to `.png`s:
 
   * **On Windows** - Double click `CelesteExtractor.bat`
   * **On Linux** - Run `CelesteExtractor.sh`
