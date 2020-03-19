@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 java -jar CelesteExtractor.jar .
