@@ -30,8 +30,16 @@ Step 1
 Celeste's `.data` graphics files are stored in `Atlases` directory. Locate that folder on your disk. It might be under the following paths:
 
 ```
-C:\Program Files (x86)\Epic Games\Celeste\Content\Graphics\Atlases
-C:\Program Files (x86)\Steam\steamapps\common\Celeste\Content\Graphics\Atlases
+On Windows:
+  C:\Program Files (x86)\Epic Games\Celeste\Content\Graphics\Atlases
+  C:\Program Files (x86)\Steam\steamapps\common\Celeste\Content\Graphics\Atlases
+
+On Linux:
+  ~/.local/share/Steam/steamapps/common/Celeste/Content/Graphics/Atlases
+
+On Mac:
+  ~/Library/Application\ Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/MacOS/Content/Graphics/Atlases
+  ~/Library/Application Support/Celeste/Content/Graphics/Atlases
 ```
 
 Extract all the files from the `CelesteExtractor_vX.X.X.zip` into the `Atlases` directory.
