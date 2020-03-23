@@ -1,4 +1,4 @@
-Celeste Extractor
+Celeste Extractor ![yummy_strawberry](https://i.imgur.com/ev4SKDS.png)
 =======
 
 Graphics in the game **[Celeste][0]** are stored in `.data` files. **Celeste Extractor** is a simple tool for losslessly converting `.data` files to easily-readable `.png` files. The goal was to create a tool that is:
