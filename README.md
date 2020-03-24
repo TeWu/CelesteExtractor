@@ -38,12 +38,11 @@ On Linux:
   ~/.local/share/Steam/steamapps/common/Celeste/Content/Graphics/Atlases
 
 On Mac:
-  ~/Library/Application\ Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/MacOS/Content/Graphics/Atlases
+  ~/Library/Application Support/Steam/steamapps/common/Celeste/Celeste.app/Contents/MacOS/Content/Graphics/Atlases
   ~/Library/Application Support/Celeste/Content/Graphics/Atlases
 ```
 
 Extract all the files from the `CelesteExtractor_vX.X.X.zip` into the `Atlases` directory.
-
 
 Step 2
 ---
