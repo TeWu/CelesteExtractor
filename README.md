@@ -5,7 +5,7 @@ Graphics in the game **[Celeste][0]** are stored in `.data` files. **Celeste Ext
 
   * Extremely simple to use (just double click it)
   * Portable across operating systems (written in Java)
-  * Tiny (11KB), yet
+  * Tiny (11kB), yet
   * Very fast (converts all of Celeste's `.data` files in just 1 minute)
 
 
